@@ -149,6 +149,7 @@ for _, item in pairs(frozen_items) do
     recipe.category = "smelting"
     recipe.allow_productivity = false
     recipe.allow_quality = false
+    recipe.allowed_module_categories = {"efficiency", "speed"}
     recipe.icons = util.table.deepcopy(item.icons)
     table.insert(recipe.icons, {
         icon = "__freezer__/graphics/icons/fire.png",
@@ -164,7 +165,8 @@ end
 
 table.insert(data.raw["assembling-machine"]["cryogenic-plant"].crafting_categories, "freezer-cryogenics-category")
 
--- WAGON
+-- WAGON START ================================================================================
+
 local cargo_wagon_freezer = table.deepcopy(data.raw["cargo-wagon"]["cargo-wagon"])
 cargo_wagon_freezer.name = "cargo-wagon-freezer"
 cargo_wagon_freezer.icon = "__freezer__/graphics/icons/cargo-wagon-freezer.png"
@@ -180,10 +182,7 @@ cargo_wagon_freezer.pictures.rotated.layers[1].tint = tint
 cargo_wagon_freezer.pictures.rotated.layers[2].tint = tint
 cargo_wagon_freezer.pictures.sloped.layers[1].tint = tint
 cargo_wagon_freezer.pictures.sloped.layers[2].tint = tint
-cargo_wagon_freezer.vertical_doors.layers[1].filename = "__freezer__/graphics/entity/cargo-wagon-freezer/cargo-wagon-door-vertical.png"
-cargo_wagon_freezer.vertical_doors.layers[2].filename = "__freezer__/graphics/entity/cargo-wagon-freezer/cargo-wagon-door-vertical-mask.png"
-cargo_wagon_freezer.horizontal_doors.layers[1].filename = "__freezer__/graphics/entity/cargo-wagon-freezer/cargo-wagon-door-horizontal.png"
-cargo_wagon_freezer.horizontal_doors.layers[2].filename = "__freezer__/graphics/entity/cargo-wagon-freezer/cargo-wagon-door-horizontal-mask.png"
+
 cargo_wagon_freezer.minimap_representation.filename = "__freezer__/graphics/icons/cargo-wagon-freezer-minimap-representation.png"
 -- Add Equipment Grid
 cargo_wagon_freezer.equipment_grid = "cargo-wagon-freezer-equipment-grid"
@@ -200,6 +199,42 @@ for _, equipment in pairs(data.raw["solar-panel-equipment"]) do
     table.insert(equipment.categories, "cargo-wagon-freezer")
 end
 
+local function update_sprite(layer, desired_filename, desired_width, desired_height)
+    layer.filename = desired_filename
+    layer.scale = 0.5
+    layer.width = desired_width
+    layer.height = desired_height
+end
+
+update_sprite(
+    cargo_wagon_freezer.vertical_doors.layers[1],
+    "__freezer__/graphics/entity/cargo-wagon-freezer/cargo-wagon-door-vertical.png",
+    118,
+    402
+)
+
+update_sprite(
+    cargo_wagon_freezer.vertical_doors.layers[2],
+    "__freezer__/graphics/entity/cargo-wagon-freezer/cargo-wagon-door-vertical-mask.png",
+    110,
+    332
+)
+
+update_sprite(
+    cargo_wagon_freezer.horizontal_doors.layers[1],
+    "__freezer__/graphics/entity/cargo-wagon-freezer/cargo-wagon-door-horizontal.png",
+    438,
+    84
+)
+
+update_sprite(
+    cargo_wagon_freezer.horizontal_doors.layers[2],
+    "__freezer__/graphics/entity/cargo-wagon-freezer/cargo-wagon-door-horizontal-mask.png",
+    368,
+    80
+)
+
+-- WAGON END ================================================================================
 
 local default_planet_temp = 18
 local planet_temps = {
