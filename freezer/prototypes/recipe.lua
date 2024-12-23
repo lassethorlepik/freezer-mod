@@ -40,7 +40,7 @@ data:extend({
     {
         type = "recipe",
         name = "freeze-water",
-        category = "freezer-category",
+        category = "freezer-cryogenics-category",
         order = "1",
         subgroup = "ice-subgroup",
         enabled = false,
