@@ -4,10 +4,7 @@ Date: 23.12.2024
   Info:
     - Updated by Fr_Dae
   Changes:
-    - add fr loc
-    - improve info.json
-    - add sources 
-    - improve readme.md
+    - French localization
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.9
 Date: 23.12.2024
