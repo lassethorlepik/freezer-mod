@@ -211,6 +211,9 @@ local planet_temps = {
 }
 
 for name, data in pairs(data.raw.planet) do
+    if not data.surface_properties then
+        data.surface_properties = {}
+    end
     if not data.surface_properties.temperature then
         data.surface_properties.temperature = planet_temps[name] or default_planet_temp
     end
