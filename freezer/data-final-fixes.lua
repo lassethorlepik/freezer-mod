@@ -2,25 +2,52 @@ local frozen_multipler = settings.startup["frozen-spoil-time"].value
 --local frozen_weight_bonus = settings.startup["ice-extra-weight"].value
 local frozen_items = {}
 
+local capsule_action = {
+    type = "use-on-self",
+    attack_parameters = {
+        type = "projectile",
+        range = 0,
+        cooldown = 60,
+        ammo_type = {
+                target_type = "position"
+            },
+        ammo_category = "melee",
+        activation_type = "activate"
+    },
+    uses_stack = false
+}
+
+local function get_localized_name(item)
+    -- Some items do not have localized names
+    if item.place_result then
+        return {"entity-name." .. item.place_result}
+    elseif item.place_as_equipment_result then
+        return {"equipment-name." .. item.place_as_equipment_result}
+    else
+        return item.localised_name or {'item-name.' .. item.name}
+    end
+end
+
 for _, category in pairs(data.raw) do
     for _, item in pairs(category) do
         if item.spoil_ticks and item.name ~= "ice" then
-        
+
         -- Create a deep copy of the original item
         local frozen_item = table.deepcopy(item)
-
         frozen_item.name = "MOD-FROZEN-" .. item.name
+        frozen_item.spoil_result = item.spoil_result
+        frozen_item.subgroup = "freezing-subgroup"
+        frozen_item.hidden_in_factoriopedia = true
 
         -- Frozen item spoil time
         frozen_item.spoil_ticks = math.min(item.spoil_ticks * frozen_multipler, 4294967295)
-        local original_icons = frozen_item.icons or {}
-
+        
         -- Ice icon
+        local original_icons = frozen_item.icons or {}
         frozen_item.icons = {
             {
                 icon = "__freezer__/graphics/icons/ice.png",
-                icon_size = 64,
-                scale = 0.5
+                icon_size = 64
             }
         }
         for _, icon in pairs(original_icons) do
@@ -29,22 +56,21 @@ for _, category in pairs(data.raw) do
         if frozen_item.icon then
             local original_icon = {
                 icon = frozen_item.icon,
-                scale = 0.4
+                icon_size = frozen_item.icon_size or 64,
+                scale = 32 / (frozen_item.icon_size or 64) * 0.8
             }
             table.insert(frozen_item.icons, original_icon)
         end
         table.insert(frozen_item.icons,  {
             icon = "__freezer__/graphics/icons/ice-translucent.png",
-            icon_size = 64,
-            scale = 0.5
+            icon_size = 64
         })
         frozen_item.icon = nil
 
         -- New display name
-        local original_name = frozen_item.localised_name or {'item-name.' .. item.name}
-        frozen_item.localised_name = {"custom.frozen-item", original_name}
+        frozen_item.localised_name = {"custom.frozen-item", get_localized_name(item)}
 
-        frozen_item.spoil_result = item.spoil_result
+        -- Make frozen item unuseable
         frozen_item.fuel_category = nil
         frozen_item.fuel_value = nil
         frozen_item.fuel_acceleration_multiplier = nil
@@ -52,9 +78,10 @@ for _, category in pairs(data.raw) do
         frozen_item.fuel_emissions_multiplier = nil
         frozen_item.fuel_glow_color = nil
         frozen_item.place_result = nil
-        frozen_item.hidden_in_factoriopedia = true
-
-        frozen_item.subgroup = "freezing-subgroup"
+        frozen_item.place_as_equipment_result = nil
+        if frozen_item.capsule_action then
+            frozen_item.capsule_action = capsule_action
+        end
 
         -- Add to game
         table.insert(frozen_items, frozen_item)
@@ -125,8 +152,7 @@ for _, item in pairs(frozen_items) do
     recipe.icons = util.table.deepcopy(item.icons)
     table.insert(recipe.icons, {
         icon = "__freezer__/graphics/icons/fire.png",
-        icon_size = 64,
-        scale = 0.5
+        icon_size = 64
     })
     local unlock = {
         type = "unlock-recipe",
