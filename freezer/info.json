@@ -1,9 +1,9 @@
 {
     "name": "freezer",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "title": "Freezer",
     "author": "estgamer",
     "factorio_version": "2.0",
-    "description": "Freeze water into ice. Enclose items in ice to slow spoiling. Store spoilables in a refrigerator to stop spoiling completely. Dynamic mod support - graphics and spoilage times generated automatically.",
+    "description": "Freeze water into ice. Enclose items in ice to slow spoiling. Store spoilables in a refrigerator to stop spoiling completely. Fridges draw power based on ambient temperature. Also has cooled wagons.",
     "dependencies": ["base >= 2.0.0", "space-age"]
   }

@@ -92,5 +92,53 @@ data:extend({
       }
     },
     order = "a"
+  },
+  {
+    type = "technology",
+    name = "refrigeration-wagons",
+    icon = "__freezer__/graphics/technology/refrigeration-wagons.png",
+    icon_size = 256,
+    prerequisites = {"refrigeration"},
+    unit = {
+      count = 5000,
+      ingredients = {
+        {
+          "automation-science-pack",
+          1
+        },
+        {
+          "logistic-science-pack",
+          1
+        },
+        {
+          "chemical-science-pack",
+          1
+        },
+        {
+          "production-science-pack",
+          1
+        },
+        {
+          "utility-science-pack",
+          1
+        },
+        {
+          "space-science-pack",
+          1
+        },
+        {
+          "cryogenic-science-pack",
+          1
+        }
+      },
+      time = 60
+    },
+    effects = {
+      {
+        type = "unlock-recipe",
+        recipe = "cargo-wagon-freezer"
+      }
+    },
+    order = "a"
   }
 })

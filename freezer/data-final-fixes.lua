@@ -47,6 +47,10 @@ for _, category in pairs(data.raw) do
         frozen_item.spoil_result = item.spoil_result
         frozen_item.fuel_category = nil
         frozen_item.fuel_value = nil
+        frozen_item.fuel_acceleration_multiplier = nil
+        frozen_item.fuel_top_speed_multiplier = nil
+        frozen_item.fuel_emissions_multiplier = nil
+        frozen_item.fuel_glow_color = nil
         frozen_item.place_result = nil
         frozen_item.hidden_in_factoriopedia = true
 
@@ -133,3 +137,39 @@ for _, item in pairs(frozen_items) do
 end
 
 table.insert(data.raw["assembling-machine"]["cryogenic-plant"].crafting_categories, "freezer-cryogenics-category")
+
+-- WAGON
+local cargo_wagon_freezer = table.deepcopy(data.raw["cargo-wagon"]["cargo-wagon"])
+cargo_wagon_freezer.name = "cargo-wagon-freezer"
+cargo_wagon_freezer.icon = "__freezer__/graphics/icons/cargo-wagon-freezer.png"
+cargo_wagon_freezer.icon_size = 64
+cargo_wagon_freezer.weight = cargo_wagon_freezer.weight * 1.2
+cargo_wagon_freezer.inventory_size = cargo_wagon_freezer.inventory_size * 0.5
+cargo_wagon_freezer.factoriopedia_simulation = {
+    init = "    game.simulation.camera_position = {1, 0.5}\n    game.surfaces[1].create_entities_from_blueprint_string\n    {\n      string = \"0eNqN011uwjAMAOC7+DlF0DYFepVpqkIxxVrqoCSFMdS7z6XsR2KT8hjH/pLI8Q12dsCTJ45Q34BaxwHqlxsE6tjYKcamR6jBG7IwKiDe4zvUq/FVAXKkSDhX3BfXhod+h14S1FdliFLbHWN2JxScXJAqxxMuUrZWcIU614LvyWM775WjejLzZFMnm0WyWSSb5bfZGt+57GI6x9nBI37I9rO8XGyL9a8rI5udxca6jkKkNjSXI8m6d2fiDuqDsQEVOE9yrpmh5SLXU3POEnJeIB6s/eNqOvm5q+TnVqlmOrlOJdObskkl//s78uFDdO1bI0PCc/gxK1P0kUERezniZ6oUnNGHO5FvVuWm0FVVlbrS23H8BCsMKtg=\",\n      position = {0, 0}\n    }\n  "
+}
+-- Update graphics
+local tint = {r=0, g=0.6, b=0.9}
+cargo_wagon_freezer.pictures.rotated.layers[1].tint = tint
+cargo_wagon_freezer.pictures.rotated.layers[2].tint = tint
+cargo_wagon_freezer.pictures.sloped.layers[1].tint = tint
+cargo_wagon_freezer.pictures.sloped.layers[2].tint = tint
+cargo_wagon_freezer.vertical_doors.layers[1].filename = "__freezer__/graphics/entity/cargo-wagon-freezer/cargo-wagon-door-vertical.png"
+cargo_wagon_freezer.vertical_doors.layers[2].filename = "__freezer__/graphics/entity/cargo-wagon-freezer/cargo-wagon-door-vertical-mask.png"
+cargo_wagon_freezer.horizontal_doors.layers[1].filename = "__freezer__/graphics/entity/cargo-wagon-freezer/cargo-wagon-door-horizontal.png"
+cargo_wagon_freezer.horizontal_doors.layers[2].filename = "__freezer__/graphics/entity/cargo-wagon-freezer/cargo-wagon-door-horizontal-mask.png"
+cargo_wagon_freezer.minimap_representation.filename = "__freezer__/graphics/icons/cargo-wagon-freezer-minimap-representation.png"
+-- Add Equipment Grid
+cargo_wagon_freezer.equipment_grid = "cargo-wagon-freezer-equipment-grid"
+cargo_wagon_freezer.minable.result = "cargo-wagon-freezer"
+data:extend({cargo_wagon_freezer})
+-- Allow batteries and generators
+for _, equipment in pairs(data.raw["battery-equipment"]) do
+    table.insert(equipment.categories, "cargo-wagon-freezer")
+end
+for _, equipment in pairs(data.raw["generator-equipment"]) do
+    table.insert(equipment.categories, "cargo-wagon-freezer")
+end
+for _, equipment in pairs(data.raw["solar-panel-equipment"]) do
+    table.insert(equipment.categories, "cargo-wagon-freezer")
+end

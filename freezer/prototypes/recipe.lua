@@ -98,4 +98,42 @@ data:extend({
             }
         }
     },
+    {
+        type = "recipe",
+        name = "cargo-wagon-freezer",
+        category = "crafting-with-fluid",
+        enabled = false,
+        energy_required = 5,
+        order = "3",
+        subgroup = "freezing-machines-subgroup",
+        ingredients = {
+            {
+                type = "fluid",
+                name = "fluoroketone-cold",
+                amount = 50
+            },
+            {
+                type = "item",
+                name = "cargo-wagon",
+                amount = 1
+            },
+            {
+                type = "item",
+                name = "pump",
+                amount = 2
+            },
+            {
+                type = "item",
+                name = "iron-plate",
+                amount = 20
+            }
+        },
+        results = {
+            {
+                type = "item",
+                name = "cargo-wagon-freezer",
+                amount = 1
+            }
+        }
+    },
 })

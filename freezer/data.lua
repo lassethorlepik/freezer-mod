@@ -47,6 +47,42 @@ data:extend({
         name = "unfreezing-subgroup",
         group = "freezing-group",
         order = "4"
+    },
+    {
+        type = "equipment-category",
+        name = "cargo-wagon-freezer"
+    },
+    {
+        type = "equipment-grid",
+        name = "cargo-wagon-freezer-equipment-grid",
+        width = 6,
+        height = 4,
+        equipment_categories = {"cargo-wagon-freezer"}
+    },
+    {
+        type = "belt-immunity-equipment",
+        name = "cargo-wagon-freezer-equipment",
+        equipment_categories = {"cargo-wagon-freezer"},
+        energy_consumption = "2MW",
+        energy_source = {
+            type = "electric",
+            buffer_capacity = "10MJ",
+            usage_priority = "primary-input",
+            input_flow_limit = "3MW",
+            output_flow_limit = "0W",
+        },
+        shape = {
+            width = 2,
+            height = 2,
+            type = "full"
+        },
+        hidden_in_factoriopedia = true,
+        sprite = {
+            filename = "__freezer__/graphics/icons/spoilables-freezer.png",
+            size = 256
+        },
+        categories = {"cargo-wagon-freezer"},
+        take_result = "spoilables-freezer"
     }
 })
 

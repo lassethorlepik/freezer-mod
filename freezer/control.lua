@@ -1,13 +1,16 @@
 script.on_init(function()
     storage.spoilage_freezers = {}
+    storage.spoilage_freezer_wagons = {}
 end)
 
 script.on_configuration_changed(function()
     storage.spoilage_freezers = storage.spoilage_freezers or {}
+    storage.spoilage_freezer_wagons = storage.spoilage_freezer_wagons or {}
 end)
 
 local event_filter = {
     {filter="name", name="spoilables-freezer"},
+    {filter="name", name="cargo-wagon-freezer"},
 }
 
 local function on_built(event)
@@ -21,7 +24,6 @@ local function on_built(event)
         end
         local power = math.max(temp, 0) / 18
         entity.power_usage = power * 1000000 / 60
-
         local container = surf.create_entity{
             name = "spoilables-freezer-container",
             position = entity.position,
@@ -32,6 +34,8 @@ local function on_built(event)
         }
         container.destructible = false
         storage.spoilage_freezers[entity.unit_number] = {entity = entity, container = container}
+    elseif entity.name == "cargo-wagon-freezer" then
+        storage.spoilage_freezer_wagons[entity.unit_number] = entity
     end
 end
 
@@ -53,36 +57,29 @@ local function on_entity_removed(event)
             end
         end
         storage.spoilage_freezers[entity.unit_number] = nil
+    elseif entity.name == "cargo-wagon-freezer" then
+        storage.spoilage_freezer_wagons[entity.unit_number] = nil
+        for index, equipment in ipairs(entity.grid.equipment) do
+            local item = equipment.prototype.take_result
+            local item_stack = {name=item.name, count=1, quality=equipment.quality}
+            entity.surface.spill_item_stack{position=entity.position, stack=item_stack, enable_looted=true, force=entity.force, allow_belts=false}
+        end
     end
 end
 
-script.on_event(defines.events.on_built_entity, function(event)
-    on_built(event)
-end, event_filter)
+script.on_event(defines.events.on_built_entity, on_built, event_filter)
 
-script.on_event(defines.events.on_robot_built_entity, function(event)
-    on_built(event)
-end, event_filter)
+script.on_event(defines.events.on_robot_built_entity, on_built, event_filter)
 
-script.on_event(defines.events.on_space_platform_built_entity, function(event)
-    on_built(event)
-end, event_filter)
+script.on_event(defines.events.on_space_platform_built_entity, on_built, event_filter)
 
-script.on_event(defines.events.on_player_mined_entity, function(event)
-    on_entity_removed(event)
-end, event_filter)
+script.on_event(defines.events.on_player_mined_entity, on_entity_removed, event_filter)
 
-script.on_event(defines.events.on_robot_mined_entity, function(event)
-    on_entity_removed(event)
-end, event_filter)
+script.on_event(defines.events.on_robot_mined_entity, on_entity_removed, event_filter)
 
-script.on_event(defines.events.on_entity_died, function(event)
-    on_entity_removed(event)
-end)
+script.on_event(defines.events.on_entity_died, on_entity_removed, event_filter)
 
-script.on_event(defines.events.on_space_platform_pre_mined, function(event)
-    on_entity_removed(event)
-end)
+script.on_event(defines.events.on_space_platform_pre_mined, on_entity_removed, event_filter)
 
 local function freeze_stack(stack)
     if stack and stack.valid_for_read and stack.spoil_percent ~= 0 then
@@ -91,9 +88,9 @@ local function freeze_stack(stack)
     end
 end
 
-local function freeze_container_items(container)
+local function freeze_container_items(container, type)
     if not container or not container.valid then return end
-    local inventory = container.get_inventory(defines.inventory.chest)
+    local inventory = container.get_inventory(type)
     if not inventory then return end
     for i = 1, #inventory, 1 do
         local stack = inventory[i]
@@ -110,9 +107,21 @@ script.on_nth_tick(300, function(event)
             goto continue
         end
         if entity.energy > 5000000 then -- 5MJ
-            freeze_container_items(container)
+            freeze_container_items(container, defines.inventory.chest)
         end
         ::continue::
+    end
+    for unit_nr, entity in pairs(storage.spoilage_freezer_wagons) do
+        if not entity or not entity.valid then
+            storage.spoilage_freezer_wagons[unit_nr] = nil
+            goto continue2
+        end
+        local equipment = entity.grid.find("cargo-wagon-freezer-equipment")
+        if not equipment then goto continue2 end
+        if equipment.energy > 5000000 then -- 5MJ
+            freeze_container_items(entity, defines.inventory.cargo_wagon)
+        end
+        ::continue2::
     end
 end)
 
