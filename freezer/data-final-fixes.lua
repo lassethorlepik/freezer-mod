@@ -4,8 +4,8 @@ local frozen_items = {}
 
 for _, category in pairs(data.raw) do
     for _, item in pairs(category) do
-        if item.spoil_ticks then
-
+        if item.spoil_ticks and item.name ~= "ice" then
+        
         -- Create a deep copy of the original item
         local frozen_item = table.deepcopy(item)
 
