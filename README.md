@@ -17,3 +17,7 @@ Fridges draw power based on ambient temperature. Also adds cooled wagons.
 - Dynamic mod support: graphics and spoilage times generated automatically. Modded planets default to 18°C.
 - Modders can add surface_properties.temperature (in Celsius) to their planet to change default temperature.
 
+![](/sources/Freeze0.png)
+![](/sources/Freeze1.png)
+![](/sources/Freeze2.png)
+![](/sources/Freeze3.png)
