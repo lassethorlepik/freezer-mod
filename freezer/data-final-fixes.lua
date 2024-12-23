@@ -12,7 +12,7 @@ for _, category in pairs(data.raw) do
         frozen_item.name = "MOD-FROZEN-" .. item.name
 
         -- Frozen item spoil time
-        frozen_item.spoil_ticks = item.spoil_ticks * frozen_multipler
+        frozen_item.spoil_ticks = math.min(item.spoil_ticks * frozen_multipler, 4294967295)
         local original_icons = frozen_item.icons or {}
 
         -- Ice icon
