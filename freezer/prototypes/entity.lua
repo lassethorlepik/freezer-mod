@@ -80,7 +80,7 @@ data:extend({
         type = "electric",
         usage_priority = "secondary-input",
         buffer_capacity = "10MJ",
-        input_flow_limit = "2MW",
+        input_flow_limit = "3MW",
         output_flow_limit = "0W",
         emissions_per_minute = {pollution=2},
     },

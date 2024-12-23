@@ -85,9 +85,3 @@ data:extend({
         take_result = "spoilables-freezer"
     }
 })
-
-data.raw.planet.nauvis.surface_properties.temperature = 18
-data.raw.planet.vulcanus.surface_properties.temperature = 60
-data.raw.planet.gleba.surface_properties.temperature = 28
-data.raw.planet.fulgora.surface_properties.temperature = 10
-data.raw.planet.aquilo.surface_properties.temperature = -40

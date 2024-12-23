@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.7
+Date: 09.12.2024
+  Bugfixes:
+    - Modded planets now default to 18°C instead of space temperature
+    - Normal fridge inflow limit set to 3MW to allow useage on warmer planets.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.6
 Date: 08.12.2024
   Bugfixes:

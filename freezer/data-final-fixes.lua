@@ -199,3 +199,19 @@ end
 for _, equipment in pairs(data.raw["solar-panel-equipment"]) do
     table.insert(equipment.categories, "cargo-wagon-freezer")
 end
+
+
+local default_planet_temp = 18
+local planet_temps = {
+    ["nauvis"] = 18,
+    ["vulcanus"] = 60,
+    ["gleba"] = 28,
+    ["fulgora"] = 10,
+    ["aquilo"] = -40,
+}
+
+for name, data in pairs(data.raw.planet) do
+    if not data.surface_properties.temperature then
+        data.surface_properties.temperature = planet_temps[name] or default_planet_temp
+    end
+end
