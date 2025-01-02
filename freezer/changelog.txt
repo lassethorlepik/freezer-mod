@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.0
+Date: 02.01.2025
+  Features:
+    - Surface temperature limits can now be set optional.
+    - Users can now disable freezing/unfreezing of specific items under settings.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.10
 Date: 23.12.2024
   Info:

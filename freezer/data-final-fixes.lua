@@ -28,63 +28,73 @@ local function get_localized_name(item)
     end
 end
 
+local do_not_freeze = {"ice"}
+local input_str = settings.startup["do-not-freeze"].value
+-- Step 1: Remove all spaces from the input string
+local cleaned_str = input_str:gsub("%s+", "")
+-- Step 2: Split the cleaned string by commas
+for item in string.gmatch(cleaned_str, "([^,]+)") do
+    do_not_freeze[item] = true
+end
+
 for _, category in pairs(data.raw) do
     for _, item in pairs(category) do
-        if item.spoil_ticks and item.name ~= "ice" then
+        if item.spoil_ticks then
+            if not do_not_freeze[item.name] then
+                -- Create a deep copy of the original item
+                local frozen_item = table.deepcopy(item)
+                frozen_item.name = "MOD-FROZEN-" .. item.name
+                frozen_item.spoil_result = item.spoil_result
+                frozen_item.subgroup = "freezing-subgroup"
+                frozen_item.hidden_in_factoriopedia = true
 
-        -- Create a deep copy of the original item
-        local frozen_item = table.deepcopy(item)
-        frozen_item.name = "MOD-FROZEN-" .. item.name
-        frozen_item.spoil_result = item.spoil_result
-        frozen_item.subgroup = "freezing-subgroup"
-        frozen_item.hidden_in_factoriopedia = true
+                -- Frozen item spoil time
+                frozen_item.spoil_ticks = math.min(item.spoil_ticks * frozen_multipler, 4294967295)
+                
+                -- Ice icon
+                local original_icons = frozen_item.icons or {}
+                frozen_item.icons = {
+                    {
+                        icon = "__freezer__/graphics/icons/ice.png",
+                        icon_size = 64
+                    }
+                }
+                for _, icon in pairs(original_icons) do
+                    table.insert(frozen_item.icons, icon)
+                end
+                if frozen_item.icon then
+                    local original_icon = {
+                        icon = frozen_item.icon,
+                        icon_size = frozen_item.icon_size or 64,
+                        scale = 32 / (frozen_item.icon_size or 64) * 0.8
+                    }
+                    table.insert(frozen_item.icons, original_icon)
+                end
+                table.insert(frozen_item.icons,  {
+                    icon = "__freezer__/graphics/icons/ice-translucent.png",
+                    icon_size = 64
+                })
+                frozen_item.icon = nil
 
-        -- Frozen item spoil time
-        frozen_item.spoil_ticks = math.min(item.spoil_ticks * frozen_multipler, 4294967295)
-        
-        -- Ice icon
-        local original_icons = frozen_item.icons or {}
-        frozen_item.icons = {
-            {
-                icon = "__freezer__/graphics/icons/ice.png",
-                icon_size = 64
-            }
-        }
-        for _, icon in pairs(original_icons) do
-            table.insert(frozen_item.icons, icon)
-        end
-        if frozen_item.icon then
-            local original_icon = {
-                icon = frozen_item.icon,
-                icon_size = frozen_item.icon_size or 64,
-                scale = 32 / (frozen_item.icon_size or 64) * 0.8
-            }
-            table.insert(frozen_item.icons, original_icon)
-        end
-        table.insert(frozen_item.icons,  {
-            icon = "__freezer__/graphics/icons/ice-translucent.png",
-            icon_size = 64
-        })
-        frozen_item.icon = nil
+                -- New display name
+                frozen_item.localised_name = {"custom.frozen-item", get_localized_name(item)}
 
-        -- New display name
-        frozen_item.localised_name = {"custom.frozen-item", get_localized_name(item)}
+                -- Make frozen item unuseable
+                frozen_item.fuel_category = nil
+                frozen_item.fuel_value = nil
+                frozen_item.fuel_acceleration_multiplier = nil
+                frozen_item.fuel_top_speed_multiplier = nil
+                frozen_item.fuel_emissions_multiplier = nil
+                frozen_item.fuel_glow_color = nil
+                frozen_item.place_result = nil
+                frozen_item.place_as_equipment_result = nil
+                if frozen_item.capsule_action then
+                    frozen_item.capsule_action = capsule_action
+                end
 
-        -- Make frozen item unuseable
-        frozen_item.fuel_category = nil
-        frozen_item.fuel_value = nil
-        frozen_item.fuel_acceleration_multiplier = nil
-        frozen_item.fuel_top_speed_multiplier = nil
-        frozen_item.fuel_emissions_multiplier = nil
-        frozen_item.fuel_glow_color = nil
-        frozen_item.place_result = nil
-        frozen_item.place_as_equipment_result = nil
-        if frozen_item.capsule_action then
-            frozen_item.capsule_action = capsule_action
-        end
-
-        -- Add to game
-        table.insert(frozen_items, frozen_item)
+                -- Add to game
+                table.insert(frozen_items, frozen_item)
+            end
         end
     end
 end
@@ -236,20 +246,22 @@ update_sprite(
 
 -- WAGON END ================================================================================
 
-local default_planet_temp = 18
-local planet_temps = {
-    ["nauvis"] = 18,
-    ["vulcanus"] = 60,
-    ["gleba"] = 28,
-    ["fulgora"] = 10,
-    ["aquilo"] = -40,
-}
+if settings.startup["temp-limit"].value then
+    local default_planet_temp = 18
+    local planet_temps = {
+        ["nauvis"] = 18,
+        ["vulcanus"] = 60,
+        ["gleba"] = 28,
+        ["fulgora"] = 10,
+        ["aquilo"] = -40,
+    }
 
-for name, data in pairs(data.raw.planet) do
-    if not data.surface_properties then
-        data.surface_properties = {}
-    end
-    if not data.surface_properties.temperature then
-        data.surface_properties.temperature = planet_temps[name] or default_planet_temp
+    for name, data in pairs(data.raw.planet) do
+        if not data.surface_properties then
+            data.surface_properties = {}
+        end
+        if not data.surface_properties.temperature then
+            data.surface_properties.temperature = planet_temps[name] or default_planet_temp
+        end
     end
 end

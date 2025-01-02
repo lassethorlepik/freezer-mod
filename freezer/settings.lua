@@ -17,4 +17,20 @@ data:extend({
         order = "b"
     }
     ]]
+    {
+        type = "bool-setting",
+        name = "temp-limit",
+        setting_type = "startup",
+        default_value = true,
+        order = "c"
+    },
+    {
+        type = "string-setting",
+        name = "do-not-freeze",
+        setting_type = "startup",
+        default_value = "",
+        auto_trim = true,
+        allow_blank = true,
+        order = "d"
+    }
 })

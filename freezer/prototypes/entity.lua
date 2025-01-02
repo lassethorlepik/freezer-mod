@@ -6,12 +6,6 @@ data:extend({
     name = "freezer",
     icon = "__freezer__/graphics/icons/freezer.png",
     icon_size = 256,
-    surface_conditions = {
-        {
-            property = "temperature",
-            max = 50,
-        }
-    },
     source_inventory_size = 1,
     result_inventory_size = 1,
     minable = {mining_time = 0.5, result = "freezer"},
@@ -90,13 +84,7 @@ data:extend({
       width = 256,
       height = 256,
       scale = 0.375,
-    },
-    surface_conditions = {
-      {
-          property = "temperature",
-          max = 50,
-      }
-    },
+    }
   },
   --[[
   {
@@ -247,3 +235,19 @@ container.surface_conditions = nil
 container.icon = "__freezer__/graphics/icons/spoilables-freezer-container.png"
 container.inventory_size = 19
 data:extend({container})
+
+if settings.startup["temp-limit"].value then
+  local temp_limit = 50
+  data.raw["assembling-machine"]["freezer"].surface_conditions = {
+    {
+        property = "temperature",
+        max = temp_limit,
+    }
+  }
+  data.raw["electric-energy-interface"]["spoilables-freezer"].surface_conditions = {
+    {
+        property = "temperature",
+        max = temp_limit,
+    }
+  }
+end
