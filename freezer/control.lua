@@ -20,7 +20,7 @@ local function on_built(event)
         local planet = surf.planet
         local temp = -270
         if planet then
-            temp = planet.prototype.surface_properties["temperature"] or -270
+            temp = planet.prototype.surface_properties.temperature or 18
         end
         local power = math.max(temp, 0) / 18
         entity.power_usage = power * 1000000 / 60
@@ -98,6 +98,14 @@ local function freeze_container_items(container, type)
     end
 end
 
+local function is_subzero(entity)
+    local planet = entity.surface.planet
+    if planet then
+        return planet.prototype.surface_properties.temperature or 1 <= 0
+    end
+    return true
+end
+
 script.on_nth_tick(300, function(event)
     for unit_nr, data in pairs(storage.spoilage_freezers) do
         local entity = data.entity
@@ -106,7 +114,7 @@ script.on_nth_tick(300, function(event)
             storage.spoilage_freezers[unit_nr] = nil
             goto continue
         end
-        if entity.energy > 5000000 then -- 5MJ
+        if entity.energy > 5000000 or is_subzero(entity) then -- 5MJ
             freeze_container_items(container, defines.inventory.chest)
         end
         ::continue::
@@ -118,7 +126,7 @@ script.on_nth_tick(300, function(event)
         end
         local equipment = entity.grid.find("cargo-wagon-freezer-equipment")
         if not equipment then goto continue2 end
-        if equipment.energy > 5000000 then -- 5MJ
+        if equipment.energy > 5000000 or is_subzero(entity) then -- 5MJ
             freeze_container_items(entity, defines.inventory.cargo_wagon)
         end
         ::continue2::

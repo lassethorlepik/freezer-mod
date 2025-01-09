@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.1
+Date: 09.01.2025
+  Bugfixes:
+    - Items are now refrigerated in unpowered refrigerators and wagons with refrigerator modules, if the ambient temperature is 0°C or less.
+    - Added description for "Installed refrigerator".
+---------------------------------------------------------------------------------------------------
 Version: 1.1.0
 Date: 02.01.2025
   Features:
